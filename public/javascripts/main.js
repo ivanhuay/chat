@@ -7,7 +7,7 @@ var socket = io.connect(url);
 doc.on("click","#msg_submit",function(){
 	var txt = $("#msg_user").val();
 	var nick = $("#nick_user").val();
-	if(!nick || nick=='')
+	if(!nick || nick=='' || nick==undefined)
 	{
 		nick='anonimo';
 	}
@@ -29,6 +29,6 @@ socket.on("msg_draw",function (data){
 	$("#msg_container").html("");
 	for(i=0;i<data.length;i++)
 	{
-		$("#msg_container").append("<p>"+data[i].msg+"</p>");
+		$("#msg_container").append("<p><b>"+data[i].name+":</b> "+data[i].msg+"</p>");
 	}
 });
