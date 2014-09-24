@@ -6,7 +6,13 @@ var socket = io.connect(url);
 
 doc.on("click","#msg_submit",function(){
 	var txt = $("#msg_user").val();
-	socket.emit("msg_emit",txt);
+	var nick = $("#nick_user").val();
+	if(!nick || nick=='')
+	{
+		nick='anonimo';
+	}
+	resp={"msg":txt,"name":nick};
+	socket.emit("msg_emit",resp);
 	$("#msg_user").val("");
 	console.log("submit");
 });

@@ -88,10 +88,10 @@ io.sockets.on("connection",function(socket){
     
     socket.emit("msg_draw",msg);
 
-    socket.on("msg_emit",function (txt){
-        msg.push({"msg":txt});
+    socket.on("msg_emit",function (data){
+        msg.push(data);
         io.sockets.emit("msg_draw",msg);
-        var user_data = new msg_user_data({"name":"prueba","msg":txt});
+        var user_data = new msg_user_data(data});
         user_data.save(function (err){
             if(err) console.log(err);
         });
