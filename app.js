@@ -6,9 +6,10 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require("mongoose");
-
+var fs = require('fs');
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var login = require('./routes/login');
 
 var app = express();
 
@@ -28,9 +29,13 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+fs.readdirSync(__dirname+'/models').forEach(function (filename){
+    if(~filename.indexOf('.js')) require(__dirname+'/models/'+filename);
+});
+
 app.use('/', routes);
 app.use('/users', users);
-
+app.use('/login', login);
 
 // error handlers
 
@@ -88,12 +93,18 @@ io.sockets.on("connection",function(socket){
     
     socket.emit("msg_draw",msg);
 
-    socket.on("msg_emit",function (data){
-        msg.push(data);
+    socket.on("msg_emit",function (data_user){
+        msg.push(data_user);
         io.sockets.emit("msg_draw",msg);
-        var user_data = new msg_user_data(data);
+        var user_data = new msg_user_data(data_user);
         user_data.save(function (err){
             if(err) console.log(err);
         });
     });
+    socket.on("singUp",function (username,pass,email){
+        var user_new = new User({"name":username,"password":pass,"email":email});
+        user_new.save(function (err){
+            if(err) console.log(err);
+        });
+    })
 })
